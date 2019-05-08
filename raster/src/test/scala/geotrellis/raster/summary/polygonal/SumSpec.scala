@@ -36,25 +36,25 @@ class SumSpec extends FunSpec
     val multibandTile = MultibandTile(tile, tile, tile)
 
     it("computes Sum for Singleband") {
-      val result = tile.polygonalSum(extent, zone)
+      val result = tile.polygonalSum(zone)
 
       result should equal (40)
     }
 
     it("computes Sum for Multiband") {
-      val result = multibandTile.polygonalSum(extent, zone)
+      val result = multibandTile.polygonalSum(zone)
 
       result should equal (Array.fill[Long](3)(40))
     }
 
     it("computes Double Sum for Singleband") {
-      val result = tile.polygonalSumDouble(extent, zone)
+      val result = tile.polygonalSumDouble(zone)
 
       result should equal (40.0)
     }
 
     it("computes Double Sum for Multiband") {
-      val result = multibandTile.polygonalSumDouble(extent, zone)
+      val result = multibandTile.polygonalSumDouble(zone)
 
       result should equal (Array.fill[Double](3)(40.0))
     }

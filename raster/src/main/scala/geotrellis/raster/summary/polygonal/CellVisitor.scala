@@ -16,22 +16,19 @@
 
 package geotrellis.raster.summary.polygonal
 
-import geotrellis.raster._
-import geotrellis.util.GetComponent
+import geotrellis.raster.Tile
 
-trait Implicits {
-  implicit def rasterHasRasterExtent[T <: CellGrid[Int]]
-    : GetComponent[Raster[T], RasterExtent] =
-    new GetComponent[Raster[T], RasterExtent] {
-      override def get: Raster[T] => RasterExtent = _.rasterExtent
-    }
+/** Visitor for  cell values of T that may record its state in R
+  * Note: R instances may be mutable and re-used when adding cell values
+  */
+trait CellVisitor[-T, R] {
 
-  implicit class withSinglebandTilePolygonalSummaryMethods(val self: Tile)
-      extends SinglebandTilePolygonalSummaryMethods
+  def empty: R
 
-  implicit class withMultibandTilePolygonalSummaryMethods(
-      val self: MultibandTile)
-      extends MultibandTilePolygonalSummaryMethods
+  // TODO: Maybe return unit instead, since we're mutating acc
+  def register(raster: T, col: Int, row: Int, acc: R): R
 }
 
-object Implicits extends Implicits
+object CellVisitor {
+  def apply[T, R](implicit ev: CellVisitor[T, R]) = ev
+}

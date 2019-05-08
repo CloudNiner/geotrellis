@@ -351,9 +351,9 @@ class GeoTiffReaderSpec extends FunSpec
     def testMinMaxAndMean(min: Double, max: Double, mean: Double, file: String) {
       val SinglebandGeoTiff(tile, extent, _, _, _, _) = SinglebandGeoTiff(file)
 
-      tile.polygonalMax(extent, extent.toPolygon) should be (max)
-      tile.polygonalMin(extent, extent.toPolygon) should be (min)
-      tile.polygonalMean(extent, extent.toPolygon) should be (mean +- MeanEpsilon)
+      tile.polygonalMax(extent.toPolygon) should be (max)
+      tile.polygonalMin(extent.toPolygon) should be (min)
+      tile.polygonalMean(extent.toPolygon) should be (mean +- MeanEpsilon)
     }
 
     it("should read UINT 16 little endian files correctly") {
@@ -382,9 +382,9 @@ class GeoTiffReaderSpec extends FunSpec
 
       val (max, min, mean) = (74032, -20334, 17.023709809131)
 
-      tile.polygonalMax(extent, extent.toPolygon) should be (max)
-      tile.polygonalMin(extent, extent.toPolygon) should be (min)
-      tile.polygonalMean(extent, extent.toPolygon) should be (mean +- MeanEpsilon)
+      tile.polygonalMax(extent.toPolygon) should be (max)
+      tile.polygonalMin(extent.toPolygon) should be (min)
+      tile.polygonalMean(extent.toPolygon) should be (mean +- MeanEpsilon)
     }
 
     it("should read GeoTiff with incorrect GeoKey Directory header correctly (NumberOfKeys is wrong)") {

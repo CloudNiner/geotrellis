@@ -36,25 +36,25 @@ class MinSpec extends FunSpec
     val multibandTile = MultibandTile(tile, tile, tile)
 
     it("computes Minimum for Singleband") {
-      val result = tile.polygonalMin(extent, zone)
+      val result = tile.polygonalMin(zone)
 
       result should equal (1)
     }
 
     it("computes Minimum for Multiband") {
-      val result = multibandTile.polygonalMin(extent, zone)
+      val result = multibandTile.polygonalMin(zone)
 
       result should equal (Array(1, 1, 1))
     }
 
     it("computes Double Minimum for Singleband") {
-      val result = tile.polygonalMinDouble(extent, zone)
+      val result = tile.polygonalMinDouble(zone)
 
       result should equal (1.0)
     }
 
     it("computes Double Minimum for Multiband") {
-      val result = multibandTile.polygonalMinDouble(extent, zone)
+      val result = multibandTile.polygonalMinDouble(zone)
 
       result should equal (Array(1.0, 1.0, 1.0))
     }

@@ -36,25 +36,25 @@ class MeanSpec extends FunSpec
     val multibandTile = MultibandTile(tile, tile, tile)
 
     it("computes Mean for Singleband") {
-      val result = tile.polygonalMean(extent, zone)
+      val result = tile.polygonalMean(zone)
 
       result should equal (1.0)
     }
 
     it("computes Mean for Multiband") {
-      val result = multibandTile.polygonalMean(extent, zone)
+      val result = multibandTile.polygonalMean(zone)
 
       result should equal (Array(1.0, 1.0, 1.0))
     }
 
     it("computes Double Mean for Singleband") {
-      val result = tile.polygonalMean(extent, zone)
+      val result = tile.polygonalMean(zone)
 
       result should equal (1.0)
     }
 
     it("computes Double Mean for for Multiband") {
-      val result = multibandTile.polygonalMean(extent, zone)
+      val result = multibandTile.polygonalMean(zone)
 
       result should equal (Array(1.0, 1.0, 1.0))
     }
