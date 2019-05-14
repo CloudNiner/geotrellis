@@ -34,24 +34,23 @@ object PolygonalSummary {
     getRasterExtent: GetComponent[A, RasterExtent]): R = {
     val rasterExtent: RasterExtent = getRasterExtent.get(raster)
     val rasterArea: Polygon = rasterExtent.extent.toPolygon
-    var result = cellVisitor.empty
 
     geometry match {
       case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
         cfor(0)(_ < rasterExtent.cols, _ + 1) { col =>
           cfor(0)(_ < rasterExtent.rows, _ + 1) { row =>
-            result = cellVisitor.register(raster, col, row, result)
+            cellVisitor.visit(raster, col, row)
           }
         }
 
       case _ =>
         Rasterizer.foreachCellByGeometry(geometry, rasterExtent, options) {
           (col: Int, row: Int) =>
-            result = cellVisitor.register(raster, col, row, result)
+            cellVisitor.visit(raster, col, row)
         }
     }
 
-    result
+    cellVisitor.result
   }
 
   trait PolygonalSummaryMethods[A] extends MethodExtensions[A] {

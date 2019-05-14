@@ -26,15 +26,12 @@ object SinglebandTileVisitors {
 
       override val empty = Int.MinValue
 
-      override def register(raster: Raster[Tile],
-                            col: Int,
-                            row: Int,
-                            acc: Int): Int = {
+      override def visit(raster: Raster[Tile],
+                         col: Int,
+                         row: Int): Unit = {
         val v = raster.tile.get(col, row)
-        if (isData(v) && v > acc) {
-          v
-        } else {
-          acc
+        if (isData(v) && v > result) {
+          result = v
         }
       }
     }
@@ -44,14 +41,12 @@ object SinglebandTileVisitors {
 
       override def empty = Monoid[FastMapHistogram].empty
 
-      override def register(raster: Raster[Tile],
-                            col: Int,
-                            row: Int,
-                            acc: FastMapHistogram): FastMapHistogram = {
+      override def visit(raster: Raster[Tile],
+                         col: Int,
+                         row: Int): Unit = {
         val v = raster.tile.get(col, row)
         // TODO: This check was in the old methods. Do we want to keep it here?
-        if (isData(v)) acc.countItem(v, count = 1)
-        acc
+        if (isData(v)) result.countItem(v, count = 1)
       }
     }
 
@@ -61,14 +56,12 @@ object SinglebandTileVisitors {
 
       override def empty = Monoid[StreamingHistogram].empty
 
-      override def register(raster: Raster[Tile],
-                            col: Int,
-                            row: Int,
-                            acc: StreamingHistogram): StreamingHistogram = {
+      override def visit(raster: Raster[Tile],
+                         col: Int,
+                         row: Int): Unit = {
         val v = raster.tile.getDouble(col, row)
         // TODO: This check was in the old methods. Do we want to keep it here?
-        if (isData(v)) acc.countItem(v, count = 1)
-        acc
+        if (isData(v)) result.countItem(v, count = 1)
       }
     }
 }

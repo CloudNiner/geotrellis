@@ -16,19 +16,31 @@
 
 package geotrellis.raster.summary.polygonal
 
-import geotrellis.raster.Tile
-
-/** Visitor for  cell values of T that may record its state in R
-  * Note: R instances may be mutable and re-used when adding cell values
+/** Visitor for cell values of T that should record their state of R
+  *
+  * The user should implement concrete subclasses that update the value of `result` as
+  * necessary on each call to `visit(raster: T, col: Int, row: Int)`
   */
 trait CellVisitor[-T, R] {
 
+  // This falls into the initialization trap with Java null pointer exceptions.
+  // If a user creates a CellVisitor where empty is an initialized object and uses val, e.g.
+  // val empty = Array[Int](), a null pointer exception will be thrown.
+  // We have to use var here because we're updating the value in visit method calls.
+  // TODO: Can we defensively prevent the user from hitting this issue?
+  // TODO: Should we explore an alternate implementation that allows the user to explicitly
+  //       override the default value of result? Currently this can be done by overriding
+  //       empty instead.
+  var result: R = empty
+
+  /**
+    * Override to set the initial value of `result` for this CellVisitor.
+    */
   def empty: R
 
-  // TODO: Maybe return unit instead, since we're mutating acc
-  def register(raster: T, col: Int, row: Int, acc: R): R
+  def visit(raster: T, col: Int, row: Int): Unit
 }
 
 object CellVisitor {
-  def apply[T, R](implicit ev: CellVisitor[T, R]) = ev
+  def apply[T, R](implicit ev: CellVisitor[T, R]): CellVisitor[T, R] = ev
 }
