@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-package geotrellis.raster.summary.polygonal
+package geotrellis.raster
+
+/** TODO: DELETE *TilePolygonalSummaryMethods
+  *       Reasons to keep: tab completion for simple polygonal summary implementations
+  *                        (dev experience)
+  *       Reasons to delete: All boilerplate. We've changed the method signature so we don't
+  *                          save client code refactors.
+  * TODO: Consider MaxVisitor implicits to group implementations for Raster[Tile|MultibandTile]
+  *       See below.
+  */
 
 /** Visitor for cell values of T that should record their state of R
   *

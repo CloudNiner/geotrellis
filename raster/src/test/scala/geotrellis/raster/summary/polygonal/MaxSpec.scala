@@ -17,8 +17,10 @@
 package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
-import geotrellis.raster.summary.polygonal.SinglebandTileVisitors._
-import geotrellis.raster.summary.polygonal.MultibandTileVisitors._
+import geotrellis.raster.summary.visitors.{
+  MultibandTileMaxVisitor,
+  TileMaxVisitor
+}
 import geotrellis.vector._
 import geotrellis.raster.testkit._
 
@@ -59,20 +61,21 @@ class MaxSpec
     val mp = MultiPolygon(tri1, tri2)
 
     it("computes Maximum for Singleband") {
-      val result = rs.polygonalSummary[Int](zone, tileMaxVisitor)
+      val result = rs.polygonalSummary[Int](zone, new TileMaxVisitor)
 
       result.get should equal(1)
     }
 
     it("computes None for disjoint Singleband polygon") {
       val disjointZone = Extent(50, 50, 60, 60).toPolygon
-      val result = rs.polygonalSummary[Int](disjointZone, tileMaxVisitor)
+      val result = rs.polygonalSummary[Int](disjointZone, new TileMaxVisitor)
 
       result should equal(None)
     }
 
     it("computes Maximum for Multiband") {
-      val result = multibandRaster.polygonalSummary[Array[Int]](zone, multibandTileMaxVisitor)
+      val result = multibandRaster
+        .polygonalSummary[Array[Int]](zone, new MultibandTileMaxVisitor)
 
       result.get should equal(Array(1, 1, 1))
     }
