@@ -20,18 +20,35 @@ import cats.Monoid
 import geotrellis.raster._
 import geotrellis.raster.histogram.{FastMapHistogram, StreamingHistogram}
 
+/**
+  * TODO: MOVE
+  *       - CellVisitor.scala to geotrellis.raster
+  *       - Visitor implementations as classes in separate files under
+  *         geotrellis.raster.summary.visitors
+  *
+  * TODO: DELETE *TilePolygonalSummaryMethods
+  *       Reasons to keep: tab completion for simple polygonal summary implementations
+  *                        (dev experience)
+  *       Reasons to delete: All boilerplate. We've changed the method signature so we don't
+  *                          save client code refactors.
+  * TODO: Consider MaxVisitor implicits to group implementations for Raster[Tile|MultibandTile]
+  *       See below.
+  */
 object SinglebandTileVisitors {
+
   def tileMaxVisitor: CellVisitor[Raster[Tile], Int] =
     new CellVisitor[Raster[Tile], Int] {
 
-      override val empty = Int.MinValue
+      private var accumulator: Int = NODATA
 
-      override def visit(raster: Raster[Tile],
-                         col: Int,
-                         row: Int): Unit = {
+      def result = accumulator
+
+      def visit(raster: Raster[Tile],
+                col: Int,
+                row: Int): Unit = {
         val v = raster.tile.get(col, row)
-        if (isData(v) && v > result) {
-          result = v
+        if (isData(v) && (v == NODATA || v > result)) {
+          accumulator = v
         }
       }
     }
@@ -39,14 +56,16 @@ object SinglebandTileVisitors {
   def tileFastMapHistogramVisitor: CellVisitor[Raster[Tile], FastMapHistogram] =
     new CellVisitor[Raster[Tile], FastMapHistogram] {
 
-      override def empty = Monoid[FastMapHistogram].empty
+      private var accumulator = Monoid[FastMapHistogram].empty
 
-      override def visit(raster: Raster[Tile],
+      def result = accumulator
+
+      def visit(raster: Raster[Tile],
                          col: Int,
                          row: Int): Unit = {
         val v = raster.tile.get(col, row)
         // TODO: This check was in the old methods. Do we want to keep it here?
-        if (isData(v)) result.countItem(v, count = 1)
+        if (isData(v)) accumulator.countItem(v, count = 1)
       }
     }
 
@@ -54,14 +73,16 @@ object SinglebandTileVisitors {
     : CellVisitor[Raster[Tile], StreamingHistogram] =
     new CellVisitor[Raster[Tile], StreamingHistogram] {
 
-      override def empty = Monoid[StreamingHistogram].empty
+      private var accumulator = Monoid[StreamingHistogram].empty
 
-      override def visit(raster: Raster[Tile],
+      def result = accumulator
+
+      def visit(raster: Raster[Tile],
                          col: Int,
                          row: Int): Unit = {
         val v = raster.tile.getDouble(col, row)
         // TODO: This check was in the old methods. Do we want to keep it here?
-        if (isData(v)) result.countItem(v, count = 1)
+        if (isData(v)) accumulator.countItem(v, count = 1)
       }
     }
 }

@@ -23,7 +23,9 @@ object MultibandTileVisitors {
   def multibandTileMaxVisitor: CellVisitor[Raster[MultibandTile], Array[Int]] =
     new CellVisitor[Raster[MultibandTile], Array[Int]] {
 
-      override def empty = Array[Int]()
+      private var accumulator = Array[Int]()
+
+      def result = accumulator
 
       override def visit(raster: Raster[MultibandTile],
                          col: Int,
@@ -31,7 +33,7 @@ object MultibandTileVisitors {
         val tiles = raster.tile.bands.toArray
         val maxValues: Array[Int] = result ++ Array.fill[Int](tiles.size - result.size)(Int.MinValue)
         val tilesWithMax: Array[(Tile, Int)] = tiles.zip(maxValues)
-        result = tilesWithMax.map {
+        accumulator = tilesWithMax.map {
           case (tile: Tile, max: Int) =>
             val value = tile.get(col, row)
             if (isData(value) && value > max) {

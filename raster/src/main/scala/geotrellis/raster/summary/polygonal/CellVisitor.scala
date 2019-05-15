@@ -22,21 +22,8 @@ package geotrellis.raster.summary.polygonal
   * necessary on each call to `visit(raster: T, col: Int, row: Int)`
   */
 trait CellVisitor[-T, R] {
-
-  // This falls into the initialization trap with Java null pointer exceptions.
-  // If a user creates a CellVisitor where empty is an initialized object and uses val, e.g.
-  // val empty = Array[Int](), a null pointer exception will be thrown.
-  // We have to use var here because we're updating the value in visit method calls.
-  // TODO: Can we defensively prevent the user from hitting this issue?
-  // TODO: Should we explore an alternate implementation that allows the user to explicitly
-  //       override the default value of result? Currently this can be done by overriding
-  //       empty instead.
-  var result: R = empty
-
-  /**
-    * Override to set the initial value of `result` for this CellVisitor.
-    */
-  def empty: R
+  // TODO: Change to Option[R]
+  def result: R
 
   def visit(raster: T, col: Int, row: Int): Unit
 }

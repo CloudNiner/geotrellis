@@ -25,6 +25,7 @@ object PolygonalSummary {
   final val DefaultOptions =
     Rasterizer.Options(includePartial = true, sampleType = PixelIsArea)
 
+  // TODO: Return type to Option[R]
   def apply[A, R](
       raster: A,
       geometry: Geometry,
@@ -42,7 +43,7 @@ object PolygonalSummary {
             cellVisitor.visit(raster, col, row)
           }
         }
-
+        // TODO: Handle no intersection case explicitly by returning None
       case _ =>
         Rasterizer.foreachCellByGeometry(geometry, rasterExtent, options) {
           (col: Int, row: Int) =>
