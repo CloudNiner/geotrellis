@@ -25,33 +25,33 @@ object PolygonalSummary {
   final val DefaultOptions =
     Rasterizer.Options(includePartial = true, sampleType = PixelIsArea)
 
-  // TODO: Return type to Option[R]
   def apply[A, R](
       raster: A,
       geometry: Geometry,
       cellVisitor: CellVisitor[A, R],
       options: Rasterizer.Options
   )(implicit
-    getRasterExtent: GetComponent[A, RasterExtent]): R = {
+    getRasterExtent: GetComponent[A, RasterExtent]): Option[R] = {
     val rasterExtent: RasterExtent = getRasterExtent.get(raster)
     val rasterArea: Polygon = rasterExtent.extent.toPolygon
-
-    geometry match {
-      case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
-        cfor(0)(_ < rasterExtent.cols, _ + 1) { col =>
-          cfor(0)(_ < rasterExtent.rows, _ + 1) { row =>
-            cellVisitor.visit(raster, col, row)
+    if (rasterArea.disjoint(geometry)) {
+      None
+    } else {
+      geometry match {
+        case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
+          cfor(0)(_ < rasterExtent.cols, _ + 1) { col =>
+            cfor(0)(_ < rasterExtent.rows, _ + 1) { row =>
+              cellVisitor.visit(raster, col, row)
+            }
           }
-        }
-        // TODO: Handle no intersection case explicitly by returning None
-      case _ =>
-        Rasterizer.foreachCellByGeometry(geometry, rasterExtent, options) {
-          (col: Int, row: Int) =>
-            cellVisitor.visit(raster, col, row)
-        }
+        case _ =>
+          Rasterizer.foreachCellByGeometry(geometry, rasterExtent, options) {
+            (col: Int, row: Int) =>
+              cellVisitor.visit(raster, col, row)
+          }
+      }
+      Some(cellVisitor.result)
     }
-
-    cellVisitor.result
   }
 
   trait PolygonalSummaryMethods[A] extends MethodExtensions[A] {
@@ -60,13 +60,13 @@ object PolygonalSummary {
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R],
         options: Rasterizer.Options
-    )(implicit ev1: GetComponent[A, RasterExtent]): R =
+    )(implicit ev1: GetComponent[A, RasterExtent]): Option[R] =
       PolygonalSummary(self, geometry, cellVisitor, options)
 
     def polygonalSummary[R](
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R]
-    )(implicit ev1: GetComponent[A, RasterExtent]): R =
+    )(implicit ev1: GetComponent[A, RasterExtent]): Option[R] =
       PolygonalSummary(self,
                        geometry,
                        cellVisitor,

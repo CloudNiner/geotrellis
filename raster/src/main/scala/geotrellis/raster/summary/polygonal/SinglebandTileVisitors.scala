@@ -47,7 +47,7 @@ object SinglebandTileVisitors {
                 col: Int,
                 row: Int): Unit = {
         val v = raster.tile.get(col, row)
-        if (isData(v) && (v == NODATA || v > result)) {
+        if (isData(v) && (v > result || isNoData(accumulator))) {
           accumulator = v
         }
       }

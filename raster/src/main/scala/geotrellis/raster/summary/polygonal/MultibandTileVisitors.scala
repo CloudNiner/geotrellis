@@ -31,12 +31,12 @@ object MultibandTileVisitors {
                          col: Int,
                          row: Int): Unit = {
         val tiles = raster.tile.bands.toArray
-        val maxValues: Array[Int] = result ++ Array.fill[Int](tiles.size - result.size)(Int.MinValue)
+        val maxValues: Array[Int] = result ++ Array.fill[Int](tiles.size - result.size)(NODATA)
         val tilesWithMax: Array[(Tile, Int)] = tiles.zip(maxValues)
         accumulator = tilesWithMax.map {
           case (tile: Tile, max: Int) =>
             val value = tile.get(col, row)
-            if (isData(value) && value > max) {
+            if (isData(value) && (value > max || isNoData(max))) {
               value
             } else {
               max

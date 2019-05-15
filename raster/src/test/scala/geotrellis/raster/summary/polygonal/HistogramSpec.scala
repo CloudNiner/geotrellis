@@ -40,8 +40,8 @@ class HistogramSpec
     it("computes Int Histogram for Singleband") {
       val result = rs.polygonalSummary[FastMapHistogram](zone, tileFastMapHistogramVisitor)
 
-      result.itemCount(1) should equal(40)
-      result.itemCount(2) should equal(0)
+      result.get.itemCount(1) should equal(40)
+      result.get.itemCount(2) should equal(0)
     }
 
 //    it("computes Histogram for Multiband") {
@@ -57,8 +57,8 @@ class HistogramSpec
       val result =
         rs.polygonalSummary[StreamingHistogram](zone, tileStreamingHistogramVisitor)
 
-      result.itemCount(1) should equal(40)
-      result.itemCount(2) should equal(0)
+      result.get.itemCount(1) should equal(40)
+      result.get.itemCount(2) should equal(0)
     }
 
 //    it("computes double Histogram for Multiband") {

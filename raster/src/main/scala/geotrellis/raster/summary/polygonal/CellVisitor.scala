@@ -22,7 +22,11 @@ package geotrellis.raster.summary.polygonal
   * necessary on each call to `visit(raster: T, col: Int, row: Int)`
   */
 trait CellVisitor[-T, R] {
-  // TODO: Change to Option[R]
+  // TODO: Change to Option[R] -- Awkward. If we do this we end up with Option[Option[Int]]
+  //       for tileMaxVisitor and Option[Array[Option[Int]]] for multibandTileVisitor due
+  //       to the outer wrapper on the PolygonalSummary return type to handle disjoint
+  //       geometries. And for some implementations, like StreamingHistogram,
+  //       Option[StreamingHistogram] doesn't really make sense.
   def result: R
 
   def visit(raster: T, col: Int, row: Int): Unit

@@ -61,13 +61,20 @@ class MaxSpec
     it("computes Maximum for Singleband") {
       val result = rs.polygonalSummary[Int](zone, tileMaxVisitor)
 
-      result should equal(1)
+      result.get should equal(1)
+    }
+
+    it("computes None for disjoint Singleband polygon") {
+      val disjointZone = Extent(50, 50, 60, 60).toPolygon
+      val result = rs.polygonalSummary[Int](disjointZone, tileMaxVisitor)
+
+      result should equal(None)
     }
 
     it("computes Maximum for Multiband") {
       val result = multibandRaster.polygonalSummary[Array[Int]](zone, multibandTileMaxVisitor)
 
-      result should equal(Array(1, 1, 1))
+      result.get should equal(Array(1, 1, 1))
     }
 
 //    it("computes Double Maximum for Singleband") {
