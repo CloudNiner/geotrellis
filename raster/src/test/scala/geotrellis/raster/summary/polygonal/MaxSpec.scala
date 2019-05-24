@@ -17,13 +17,9 @@
 package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
-import geotrellis.raster.summary.visitors.{
-  MultibandTileMaxVisitor,
-  TileMaxVisitor
-}
+import geotrellis.raster.summary.visitors.MaxVisitor
 import geotrellis.vector._
 import geotrellis.raster.testkit._
-
 import org.scalatest._
 
 class MaxSpec
@@ -66,25 +62,25 @@ class MaxSpec
     val mp = MultiPolygon(tri1, tri2)
 
     it("computes Maximum for Singleband") {
-      val result = rs.polygonalSummary(zone, new TileMaxVisitor)
+      val result = rs.polygonalSummary(zone, MaxVisitor)
       result should equal(Summary(Some(1)))
     }
 
     it("computes NoIntersection for disjoint Singleband polygon") {
       val disjointZone = Extent(50, 50, 60, 60).toPolygon
-      val result = rs.polygonalSummary(disjointZone, new TileMaxVisitor)
+      val result = rs.polygonalSummary(disjointZone, MaxVisitor)
 
       result should equal(NoIntersection)
     }
 
     it("computes None for Singleband NODATA") {
-      val result = nodataRS.polygonalSummary(zone, new TileMaxVisitor)
+      val result = nodataRS.polygonalSummary(zone, MaxVisitor)
       result should equal(Summary(None))
     }
 
     it("computes Maximum for Multiband") {
       val result = multibandRaster
-        .polygonalSummary(zone, new MultibandTileMaxVisitor)
+        .polygonalSummary(zone, MaxVisitor)
 
       result match {
         case Summary(results) => results.foreach { _ should equal(Some(1)) }
@@ -94,7 +90,7 @@ class MaxSpec
 
     it("computes None for Multiband NODATA") {
       val result = multibandNoDataRaster
-        .polygonalSummary(zone, new MultibandTileMaxVisitor)
+        .polygonalSummary(zone, MaxVisitor)
 
       result match {
         case Summary(results) => results.foreach { _ should equal(None) }

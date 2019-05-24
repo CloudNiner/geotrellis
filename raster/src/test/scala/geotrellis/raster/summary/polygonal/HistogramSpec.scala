@@ -18,8 +18,8 @@ package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
 import geotrellis.raster.summary.visitors.{
-  TileFastMapHistogramVisitor,
-  TileStreamingHistogramVisitor
+  FastMapHistogramVisitor,
+  StreamingHistogramVisitor
 }
 import geotrellis.vector._
 import geotrellis.raster.testkit._
@@ -40,7 +40,7 @@ class HistogramSpec
     val multibandTile = MultibandTile(tile, tile, tile)
 
     it("computes Int Histogram for Singleband") {
-      val result = rs.polygonalSummary(zone, new TileFastMapHistogramVisitor)
+      val result = rs.polygonalSummary(zone, FastMapHistogramVisitor)
 
       result match {
         case Summary(histogram) => histogram.itemCount(1) should equal(40)
@@ -58,7 +58,7 @@ class HistogramSpec
 //    }
 
     it("computes double Histogram for Singleband") {
-      val result = rs.polygonalSummary(zone, new TileStreamingHistogramVisitor)
+      val result = rs.polygonalSummary(zone, StreamingHistogramVisitor)
 
       result match {
         case Summary(histogram) => {

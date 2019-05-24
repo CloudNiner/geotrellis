@@ -16,21 +16,24 @@
 
 package geotrellis.raster.summary.visitors
 
+import cats.Monoid
 import geotrellis.raster._
+import geotrellis.raster.histogram.StreamingHistogram
 
-class TileMaxVisitor extends CellVisitor[Raster[Tile], Option[Int]] {
-  private var accumulator: Option[Int] = None
+object StreamingHistogramVisitor {
+  implicit def toTileVisitor(
+      t: StreamingHistogramVisitor.type): TileStreamingHistogramVisitor =
+    new TileStreamingHistogramVisitor
 
-  def result: Option[Int] = accumulator
+  class TileStreamingHistogramVisitor
+      extends CellVisitor[Raster[Tile], StreamingHistogram] {
+    private val accumulator = Monoid[StreamingHistogram].empty
 
-  def visit(raster: Raster[Tile],
-            col: Int,
-            row: Int): Unit = {
-    val value = raster.tile.get(col, row)
-    accumulator = result match {
-      case Some(max) if (isData(value) && value > max) => Some(value)
-      case None if isData(value) => Some(value)
-      case _ => result
+    def result: StreamingHistogram = accumulator
+
+    def visit(raster: Raster[Tile], col: Int, row: Int): Unit = {
+      val v = raster.tile.getDouble(col, row)
+      if (isData(v)) accumulator.countItem(v, count = 1)
     }
   }
 }

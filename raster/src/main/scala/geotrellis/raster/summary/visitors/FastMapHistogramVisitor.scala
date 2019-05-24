@@ -18,15 +18,22 @@ package geotrellis.raster.summary.visitors
 
 import cats.Monoid
 import geotrellis.raster._
-import geotrellis.raster.histogram.StreamingHistogram
+import geotrellis.raster.histogram.FastMapHistogram
 
-class TileStreamingHistogramVisitor extends CellVisitor[Raster[Tile], StreamingHistogram] {
-  private var accumulator = Monoid[StreamingHistogram].empty
+object FastMapHistogramVisitor {
+  implicit def toTileVisitor(
+      t: FastMapHistogramVisitor.type): TileFastMapHistogramVisitor =
+    new TileFastMapHistogramVisitor
 
-  def result: StreamingHistogram = accumulator
+  class TileFastMapHistogramVisitor
+      extends CellVisitor[Raster[Tile], FastMapHistogram] {
+    private val accumulator = Monoid[FastMapHistogram].empty
 
-  def visit(raster: Raster[Tile], col: Int, row: Int): Unit = {
-    val v = raster.tile.getDouble(col, row)
-    if (isData(v)) accumulator.countItem(v, count = 1)
+    def result: FastMapHistogram = accumulator
+
+    def visit(raster: Raster[Tile], col: Int, row: Int): Unit = {
+      val v = raster.tile.get(col, row)
+      if (isData(v)) accumulator.countItem(v, count = 1)
+    }
   }
 }
