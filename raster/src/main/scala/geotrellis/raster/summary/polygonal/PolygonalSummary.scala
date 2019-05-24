@@ -21,6 +21,9 @@ import geotrellis.raster.rasterize.Rasterizer
 import geotrellis.util.{GetComponent, MethodExtensions}
 import spire.syntax.cfor._
 
+/** WARNING: This is currently a WIP API that will not be stable
+  * until the general geotrellis 3.0.0 release.
+  */
 object PolygonalSummary {
   final val DefaultOptions =
     Rasterizer.Options(includePartial = true, sampleType = PixelIsArea)
