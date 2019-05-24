@@ -38,8 +38,13 @@ class MaxSpec
     val extent = rs.extent
     val zone = Extent(10, -10, 30, 10).toPolygon
 
+    val nodataRS = createRaster(Array.fill(40 * 40)(NODATA), 40, 40)
+    val nodataTile = nodataRS.tile
+
     val multibandTile = MultibandTile(tile, tile, tile)
     val multibandRaster = Raster(multibandTile, extent)
+    val multibandNoDataTile = MultibandTile(nodataTile, nodataTile, nodataTile)
+    val multibandNoDataRaster = Raster(multibandNoDataTile, extent)
 
     val xd = extent.xmax - extent.xmin / 4
     val yd = extent.ymax - extent.ymin / 4
@@ -61,23 +66,40 @@ class MaxSpec
     val mp = MultiPolygon(tri1, tri2)
 
     it("computes Maximum for Singleband") {
-      val result = rs.polygonalSummary[Int](zone, new TileMaxVisitor)
-
-      result.get should equal(1)
+      val result = rs.polygonalSummary(zone, new TileMaxVisitor)
+      result should equal(Summary(Some(1)))
     }
 
-    it("computes None for disjoint Singleband polygon") {
+    it("computes NoIntersection for disjoint Singleband polygon") {
       val disjointZone = Extent(50, 50, 60, 60).toPolygon
-      val result = rs.polygonalSummary[Int](disjointZone, new TileMaxVisitor)
+      val result = rs.polygonalSummary(disjointZone, new TileMaxVisitor)
 
-      result should equal(None)
+      result should equal(NoIntersection)
+    }
+
+    it("computes None for Singleband NODATA") {
+      val result = nodataRS.polygonalSummary(zone, new TileMaxVisitor)
+      result should equal(Summary(None))
     }
 
     it("computes Maximum for Multiband") {
       val result = multibandRaster
-        .polygonalSummary[Array[Int]](zone, new MultibandTileMaxVisitor)
+        .polygonalSummary(zone, new MultibandTileMaxVisitor)
 
-      result.get should equal(Array(1, 1, 1))
+      result match {
+        case Summary(results) => results.foreach { _ should equal(Some(1)) }
+        case _ => fail("polygonalSummary did not return a result")
+      }
+    }
+
+    it("computes None for Multiband NODATA") {
+      val result = multibandNoDataRaster
+        .polygonalSummary(zone, new MultibandTileMaxVisitor)
+
+      result match {
+        case Summary(results) => results.foreach { _ should equal(None) }
+        case _ => fail("polygonalSummary did not return a result")
+      }
     }
 
 //    it("computes Double Maximum for Singleband") {

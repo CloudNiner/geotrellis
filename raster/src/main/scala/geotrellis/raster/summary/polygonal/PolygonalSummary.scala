@@ -31,11 +31,11 @@ object PolygonalSummary {
       cellVisitor: CellVisitor[A, R],
       options: Rasterizer.Options
   )(implicit
-    getRasterExtent: GetComponent[A, RasterExtent]): Option[R] = {
+    getRasterExtent: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] = {
     val rasterExtent: RasterExtent = getRasterExtent.get(raster)
     val rasterArea: Polygon = rasterExtent.extent.toPolygon
     if (rasterArea.disjoint(geometry)) {
-      None
+      NoIntersection
     } else {
       geometry match {
         case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
@@ -50,7 +50,7 @@ object PolygonalSummary {
               cellVisitor.visit(raster, col, row)
           }
       }
-      Some(cellVisitor.result)
+      Summary(cellVisitor.result)
     }
   }
 
@@ -60,13 +60,13 @@ object PolygonalSummary {
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R],
         options: Rasterizer.Options
-    )(implicit ev1: GetComponent[A, RasterExtent]): Option[R] =
+    )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
       PolygonalSummary(self, geometry, cellVisitor, options)
 
     def polygonalSummary[R](
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R]
-    )(implicit ev1: GetComponent[A, RasterExtent]): Option[R] =
+    )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
       PolygonalSummary(self,
                        geometry,
                        cellVisitor,

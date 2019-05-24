@@ -18,26 +18,25 @@ package geotrellis.raster.summary.visitors
 
 import geotrellis.raster._
 
-class MultibandTileMaxVisitor extends CellVisitor[Raster[MultibandTile], Array[Int]] {
-  private var accumulator = Array[Int]()
+class MultibandTileMaxVisitor
+    extends CellVisitor[Raster[MultibandTile], Array[Option[Int]]] {
+  private var accumulator = Array[Option[Int]]()
 
-  def result: Array[Int] = accumulator
+  def result: Array[Option[Int]] = accumulator
 
-  def visit(raster: Raster[MultibandTile],
-                     col: Int,
-                     row: Int): Unit = {
+  def visit(raster: Raster[MultibandTile], col: Int, row: Int): Unit = {
     val tiles = raster.tile.bands.toArray
-    val maxValues: Array[Int] = result ++ Array.fill[Int](tiles.size - result.size)(NODATA)
-    val tilesWithMax: Array[(Tile, Int)] = tiles.zip(maxValues)
+    val maxValues: Array[Option[Int]] = result ++ Array.fill[Option[Int]](
+      tiles.size - result.size)(None)
+    val tilesWithMax: Array[(Tile, Option[Int])] = tiles.zip(maxValues)
     accumulator = tilesWithMax.map {
-      case (tile: Tile, max: Int) =>
+      case (tile: Tile, maybeMax: Option[Int]) =>
         val value = tile.get(col, row)
-        if (isData(value) && (value > max || isNoData(max))) {
-          value
-        } else {
-          max
+        maybeMax match {
+          case Some(max) if (isData(value) && value > max) => Some(value)
+          case None if isData(value)                       => Some(value)
+          case _                                           => maybeMax
         }
     }
   }
-
 }

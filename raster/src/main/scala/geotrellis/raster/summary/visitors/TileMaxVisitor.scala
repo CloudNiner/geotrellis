@@ -18,17 +18,19 @@ package geotrellis.raster.summary.visitors
 
 import geotrellis.raster._
 
-class TileMaxVisitor extends CellVisitor[Raster[Tile], Int] {
-  private var accumulator: Int = NODATA
+class TileMaxVisitor extends CellVisitor[Raster[Tile], Option[Int]] {
+  private var accumulator: Option[Int] = None
 
-  def result: Int = accumulator
+  def result: Option[Int] = accumulator
 
   def visit(raster: Raster[Tile],
             col: Int,
             row: Int): Unit = {
-    val v = raster.tile.get(col, row)
-    if (isData(v) && (v > result || isNoData(accumulator))) {
-      accumulator = v
+    val value = raster.tile.get(col, row)
+    accumulator = result match {
+      case Some(max) if (isData(value) && value > max) => Some(value)
+      case None if isData(value) => Some(value)
+      case _ => result
     }
   }
 }
