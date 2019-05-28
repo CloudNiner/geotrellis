@@ -41,11 +41,7 @@ class HistogramSpec
 
     it("computes Int Histogram for Singleband") {
       val result = rs.polygonalSummary(zone, FastMapHistogramVisitor)
-
-      result match {
-        case Summary(histogram) => histogram.itemCount(1) should equal(40)
-        case _                  => fail("polygonalSummary did not return a result")
-      }
+      result.right.get.itemCount(1) should equal(40)
     }
 
 //    it("computes Histogram for Multiband") {
@@ -59,14 +55,9 @@ class HistogramSpec
 
     it("computes double Histogram for Singleband") {
       val result = rs.polygonalSummary(zone, StreamingHistogramVisitor)
-
-      result match {
-        case Summary(histogram) => {
-          histogram.itemCount(1) should equal(40)
-          histogram.itemCount(2) should equal(0)
-        }
-        case _ => fail("polygonalSummary did not return a result")
-      }
+      val histogram = result.right.get
+      histogram.itemCount(1) should equal(40)
+      histogram.itemCount(2) should equal(0)
     }
 
 //    it("computes double Histogram for Multiband") {

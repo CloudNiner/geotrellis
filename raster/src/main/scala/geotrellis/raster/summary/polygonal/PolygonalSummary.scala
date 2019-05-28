@@ -21,6 +21,9 @@ import geotrellis.raster.rasterize.Rasterizer
 import geotrellis.util.{GetComponent, MethodExtensions}
 import spire.syntax.cfor._
 
+sealed trait PolygonalSummaryException extends Exception
+final case class NoIntersectionException() extends PolygonalSummaryException
+
 /** WARNING: This is currently a WIP API that will not be stable
   * until the general geotrellis 3.0.0 release.
   */
@@ -34,11 +37,11 @@ object PolygonalSummary {
       cellVisitor: CellVisitor[A, R],
       options: Rasterizer.Options
   )(implicit
-    getRasterExtent: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] = {
+    getRasterExtent: GetComponent[A, RasterExtent]): Either[Exception, R] = {
     val rasterExtent: RasterExtent = getRasterExtent.get(raster)
     val rasterArea: Polygon = rasterExtent.extent.toPolygon
     if (rasterArea.disjoint(geometry)) {
-      NoIntersection
+      Left[Exception, R](NoIntersectionException())
     } else {
       geometry match {
         case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
@@ -53,7 +56,7 @@ object PolygonalSummary {
               cellVisitor.visit(raster, col, row)
           }
       }
-      Summary(cellVisitor.result)
+      Right(cellVisitor.result)
     }
   }
 
@@ -63,13 +66,13 @@ object PolygonalSummary {
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R],
         options: Rasterizer.Options
-    )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
+    )(implicit ev1: GetComponent[A, RasterExtent]): Either[Exception, R] =
       PolygonalSummary(self, geometry, cellVisitor, options)
 
     def polygonalSummary[R](
         geometry: Geometry,
         cellVisitor: CellVisitor[A, R]
-    )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
+    )(implicit ev1: GetComponent[A, RasterExtent]): Either[Exception, R] =
       PolygonalSummary(self,
                        geometry,
                        cellVisitor,
