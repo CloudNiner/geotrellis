@@ -19,6 +19,8 @@ package geotrellis.raster.summary.polygonal.visitors
 import geotrellis.raster._
 import geotrellis.raster.summary.GridVisitor
 
+import spire.syntax.cfor._
+
 /**
   * A Visitor that allows for user-defined aggregations over a Raster[MultibandTile]
   *
@@ -40,23 +42,21 @@ protected abstract class MultibandTileFoldingVisitor
   }
 
   def visit(raster: Raster[MultibandTile], col: Int, row: Int): Unit = {
-    val tiles = raster.tile.bands.toArray
+    val bandCount = raster.tile.bandCount
     if (!initialized) {
-      accumulator = Array.fill[Double](tiles.size)(Double.NaN)
+      accumulator = Array.fill[Double](bandCount)(Double.NaN)
       initialized = true
     }
-    accumulator = tiles.zip(accumulator).map {
-      case (tile: Tile, accum: Double) =>
-        val newValue = tile.getDouble(col, row)
-        if (isData(newValue)) {
-          if (isData(accum)) {
-            fold(accum, newValue)
-          } else {
-            newValue
-          }
+    cfor(0)(_ < bandCount, _ + 1) { i =>
+      val newValue = raster.tile.band(i).getDouble(col, row)
+      val accum = accumulator(i)
+      if (isData(newValue)) {
+        accumulator(i) = if (isData(accum)) {
+          fold(accum, newValue)
         } else {
-          accum
+          newValue
         }
+      }
     }
   }
 

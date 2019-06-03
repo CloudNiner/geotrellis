@@ -96,7 +96,7 @@ lazy val commonSettings = Seq(
           .map(year => newText.replace("2018", year))
           .getOrElse(newText)
       } } )),
-  scapegoatVersion in ThisBuild := "1.3.8",
+  // scapegoatVersion in ThisBuild := "1.3.8",
   updateOptions := updateOptions.value.withGigahorse(false)
 )
 
@@ -276,7 +276,8 @@ lazy val `doc-examples` = project
   .settings(Settings.`doc-examples`)
 
 lazy val bench = project
-  .dependsOn(spark)
+  .dependsOn(raster)
+  .enablePlugins(GTBenchmarkPlugin)
   .settings(commonSettings)
   .settings(Settings.bench)
 
