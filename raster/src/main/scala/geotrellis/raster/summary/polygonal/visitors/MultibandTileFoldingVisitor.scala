@@ -24,21 +24,32 @@ import geotrellis.raster.summary.GridVisitor
 abstract class MultibandTileFoldingVisitor
     extends GridVisitor[Raster[MultibandTile], Array[Option[Double]]] {
 
-  private var accumulator = Array[Option[Double]]()
+  private var initialized = false
+  private var accumulator = Array[Double]()
 
-  def result: Array[Option[Double]] = accumulator
+  def result: Array[Option[Double]] = {
+    accumulator.map { value =>
+      if (isData(value)) Some(value) else None
+    }
+  }
 
   def visit(raster: Raster[MultibandTile], col: Int, row: Int): Unit = {
     val tiles = raster.tile.bands.toArray
-    val values: Array[Option[Double]] = result ++ Array.fill[Option[Double]](
-      tiles.size - result.size)(None)
-    accumulator = tiles.zip(values).map {
-      case (tile: Tile, maybeAccum: Option[Double]) =>
+    if (!initialized) {
+      accumulator = Array.fill[Double](tiles.size)(Double.NaN)
+      initialized = true
+    }
+    accumulator = tiles.zip(accumulator).map {
+      case (tile: Tile, accum: Double) =>
         val newValue = tile.getDouble(col, row)
-        maybeAccum match {
-          case Some(accum) if isData(newValue) => Some(fold(accum, newValue))
-          case None if isData(newValue) => Some(newValue)
-          case _ => maybeAccum
+        if (isData(newValue)) {
+          if (isData(accum)) {
+            fold(accum, newValue)
+          } else {
+            newValue
+          }
+        } else {
+          accum
         }
     }
   }

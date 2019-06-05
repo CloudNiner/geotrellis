@@ -19,10 +19,9 @@ package geotrellis.raster.summary.polygonal.visitors
 import geotrellis.raster._
 
 object MaxVisitor {
-  implicit def toTileVisitor(t: MaxVisitor.type): TileMaxVisitor =
-    new TileMaxVisitor
-  implicit def toMultibandTileVisitor(
-      t: MaxVisitor.type): MultibandTileMaxVisitor = new MultibandTileMaxVisitor
+  implicit def toTileVisitor(t: MaxVisitor.type): TileMaxVisitor = new TileMaxVisitor
+  implicit def toMultibandTileVisitor(t: MaxVisitor.type): MultibandTileMaxVisitor =
+    new MultibandTileMaxVisitor
 
   class TileMaxVisitor extends TileFoldingVisitor {
     def fold(max: Double, newValue: Double): Double =

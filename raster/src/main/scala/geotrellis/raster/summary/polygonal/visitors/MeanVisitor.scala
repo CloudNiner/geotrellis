@@ -17,10 +17,8 @@
 package geotrellis.raster.summary.polygonal.visitors
 
 object MeanVisitor {
-  implicit def toTileVisitor(t: MeanVisitor.type): TileMeanVisitor =
-    new TileMeanVisitor
-  implicit def toMultibandTileVisitor(
-      t: MeanVisitor.type): MultibandTileMeanVisitor =
+  implicit def toTileVisitor(t: MeanVisitor.type): TileMeanVisitor = new TileMeanVisitor
+  implicit def toMultibandTileVisitor(t: MeanVisitor.type): MultibandTileMeanVisitor =
     new MultibandTileMeanVisitor
 
   class TileMeanVisitor extends TileFoldingVisitor {

@@ -17,10 +17,9 @@
 package geotrellis.raster.summary.polygonal.visitors
 
 object SumVisitor {
-  implicit def toTileVisitor(t: SumVisitor.type): TileSumVisitor =
-    new TileSumVisitor
-  implicit def toMultibandTileVisitor(
-      t: SumVisitor.type): MultibandTileSumVisitor = new MultibandTileSumVisitor
+  implicit def toTileVisitor(t: SumVisitor.type): TileSumVisitor = new TileSumVisitor
+  implicit def toMultibandTileVisitor(t: SumVisitor.type): MultibandTileSumVisitor =
+    new MultibandTileSumVisitor
 
   class TileSumVisitor extends TileFoldingVisitor {
     def fold(sum: Double, newValue: Double): Double = sum + newValue

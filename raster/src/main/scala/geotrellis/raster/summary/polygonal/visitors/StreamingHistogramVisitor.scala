@@ -22,12 +22,10 @@ import geotrellis.raster.histogram.StreamingHistogram
 import geotrellis.raster.summary.GridVisitor
 
 object StreamingHistogramVisitor {
-  implicit def toTileVisitor(
-      t: StreamingHistogramVisitor.type): TileStreamingHistogramVisitor =
-    new TileStreamingHistogramVisitor
-  implicit def toMultibandTileVisitor(t: StreamingHistogramVisitor.type)
-    : MultibandTileStreamingHistogramVisitor =
-    new MultibandTileStreamingHistogramVisitor
+  implicit def toTileVisitor(t: StreamingHistogramVisitor.type):
+    TileStreamingHistogramVisitor = new TileStreamingHistogramVisitor
+  implicit def toMultibandTileVisitor(t: StreamingHistogramVisitor.type):
+    MultibandTileStreamingHistogramVisitor = new MultibandTileStreamingHistogramVisitor
 
   class TileStreamingHistogramVisitor
       extends GridVisitor[Raster[Tile], StreamingHistogram] {

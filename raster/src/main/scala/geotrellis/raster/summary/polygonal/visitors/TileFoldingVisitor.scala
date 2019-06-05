@@ -22,18 +22,16 @@ import geotrellis.raster.summary.GridVisitor
 abstract class TileFoldingVisitor
     extends GridVisitor[Raster[Tile], Option[Double]] {
   private var accumulator: Double = Double.NaN
-  private var visited: Boolean = false
 
-  def result: Option[Double] = if (visited) Some(accumulator) else None
+  def result: Option[Double] = if (isData(accumulator)) Some(accumulator) else None
 
   def visit(raster: Raster[Tile], col: Int, row: Int): Unit = {
     val newValue = raster.tile.getDouble(col, row)
     if (isData(newValue)) {
-      if (visited) {
+      if (isData(accumulator)) {
         accumulator = fold(accumulator, newValue)
       } else {
         accumulator = newValue
-        visited = true
       }
     }
   }

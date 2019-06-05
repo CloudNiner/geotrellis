@@ -19,10 +19,9 @@ package geotrellis.raster.summary.polygonal.visitors
 import geotrellis.raster._
 
 object MinVisitor {
-  implicit def toTileVisitor(t: MinVisitor.type): TileMinVisitor =
-    new TileMinVisitor
-  implicit def toMultibandTileVisitor(
-      t: MinVisitor.type): MultibandTileMinVisitor = new MultibandTileMinVisitor
+  implicit def toTileVisitor(t: MinVisitor.type): TileMinVisitor = new TileMinVisitor
+  implicit def toMultibandTileVisitor(t: MinVisitor.type): MultibandTileMinVisitor =
+    new MultibandTileMinVisitor
 
   class TileMinVisitor extends TileFoldingVisitor {
     def fold(min: Double, newValue: Double): Double =
