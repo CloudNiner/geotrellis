@@ -18,8 +18,8 @@ package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
 import geotrellis.raster.summary.polygonal.visitors.MaxVisitor
-import geotrellis.vector._
 import geotrellis.raster.testkit._
+import geotrellis.vector._
 import org.scalatest._
 
 class MaxSpec
@@ -113,29 +113,5 @@ class MaxSpec
         case _ => fail("polygonalSummary did not return a result")
       }
     }
-
-//    it("computes Double Maximum for Singleband") {
-//      val result = tile.polygonalMaxDouble(zone)
-//
-//      result should equal(1.0)
-//    }
-//
-//    it("computes Double Maximum for Multiband") {
-//      val result = multibandTile.polygonalMaxDouble(zone)
-//
-//      result should equal(Array(1.0, 1.0, 1.0))
-//    }
-//
-//    it("computes double max over multipolygon for Singleband") {
-//      val result = tile.polygonalMaxDouble(mp)
-//
-//      result should equal(1.0)
-//    }
-//
-//    it("computes double max over multipolygon for Multiband") {
-//      val result = multibandTile.polygonalMaxDouble(mp)
-//
-//      result should equal(Array(1.0, 1.0, 1.0))
-//    }
   }
 }

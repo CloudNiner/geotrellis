@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
-import geotrellis.raster.summary.CellVisitor
+import geotrellis.raster.summary.GridVisitor
 
 abstract class TileFoldingVisitor
-    extends CellVisitor[Raster[Tile], Option[Double]] {
-  private var accumulator: Option[Double] = None
+    extends GridVisitor[Raster[Tile], Option[Double]] {
+  private var accumulator: Double = Double.NaN
+  private var visited: Boolean = false
 
-  def result: Option[Double] = accumulator
+  def result: Option[Double] = if (visited) Some(accumulator) else None
 
   def visit(raster: Raster[Tile], col: Int, row: Int): Unit = {
     val newValue = raster.tile.getDouble(col, row)
-    accumulator = result match {
-      case Some(accum) if isData(newValue) => Some(fold(accum, newValue))
-      case None if isData(newValue)        => Some(newValue)
-      case _                               => result
+    if (isData(newValue)) {
+      if (visited) {
+        accumulator = fold(accumulator, newValue)
+      } else {
+        accumulator = newValue
+        visited = true
+      }
     }
   }
 

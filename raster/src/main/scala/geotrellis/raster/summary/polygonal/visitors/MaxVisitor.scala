@@ -17,16 +17,12 @@
 package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
-import geotrellis.raster.summary.CellVisitor
 
 object MaxVisitor {
   implicit def toTileVisitor(t: MaxVisitor.type): TileMaxVisitor =
     new TileMaxVisitor
   implicit def toMultibandTileVisitor(
       t: MaxVisitor.type): MultibandTileMaxVisitor = new MultibandTileMaxVisitor
-
-  implicit def fold(max: Double, newValue: Double): Double =
-    if (isData(newValue) && newValue > max) newValue else max
 
   class TileMaxVisitor extends TileFoldingVisitor {
     def fold(max: Double, newValue: Double): Double =

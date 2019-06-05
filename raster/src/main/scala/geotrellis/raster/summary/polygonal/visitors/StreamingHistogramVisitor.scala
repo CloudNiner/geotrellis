@@ -19,7 +19,7 @@ package geotrellis.raster.summary.polygonal.visitors
 import cats.Monoid
 import geotrellis.raster._
 import geotrellis.raster.histogram.StreamingHistogram
-import geotrellis.raster.summary.CellVisitor
+import geotrellis.raster.summary.GridVisitor
 
 object StreamingHistogramVisitor {
   implicit def toTileVisitor(
@@ -30,7 +30,7 @@ object StreamingHistogramVisitor {
     new MultibandTileStreamingHistogramVisitor
 
   class TileStreamingHistogramVisitor
-      extends CellVisitor[Raster[Tile], StreamingHistogram] {
+      extends GridVisitor[Raster[Tile], StreamingHistogram] {
     private val accumulator = Monoid[StreamingHistogram].empty
 
     def result: StreamingHistogram = accumulator
@@ -42,7 +42,7 @@ object StreamingHistogramVisitor {
   }
 
   class MultibandTileStreamingHistogramVisitor
-      extends CellVisitor[Raster[MultibandTile], Array[StreamingHistogram]] {
+      extends GridVisitor[Raster[MultibandTile], Array[StreamingHistogram]] {
     private val accumulator = Array[StreamingHistogram]()
 
     def result: Array[StreamingHistogram] = accumulator

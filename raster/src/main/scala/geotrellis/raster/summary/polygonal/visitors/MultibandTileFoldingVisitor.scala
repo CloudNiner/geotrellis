@@ -17,10 +17,12 @@
 package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
-import geotrellis.raster.summary.CellVisitor
+import geotrellis.raster.summary.GridVisitor
 
+// TODO: Docs if public
+// TODO: Refactor for performance
 abstract class MultibandTileFoldingVisitor
-    extends CellVisitor[Raster[MultibandTile], Array[Option[Double]]] {
+    extends GridVisitor[Raster[MultibandTile], Array[Option[Double]]] {
 
   private var accumulator = Array[Option[Double]]()
 
@@ -35,8 +37,8 @@ abstract class MultibandTileFoldingVisitor
         val newValue = tile.getDouble(col, row)
         maybeAccum match {
           case Some(accum) if isData(newValue) => Some(fold(accum, newValue))
-          case None if isData(newValue)        => Some(newValue)
-          case _                               => maybeAccum
+          case None if isData(newValue) => Some(newValue)
+          case _ => maybeAccum
         }
     }
   }

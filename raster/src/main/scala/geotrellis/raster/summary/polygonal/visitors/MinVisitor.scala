@@ -17,7 +17,6 @@
 package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
-import geotrellis.raster.summary.CellVisitor
 
 object MinVisitor {
   implicit def toTileVisitor(t: MinVisitor.type): TileMinVisitor =

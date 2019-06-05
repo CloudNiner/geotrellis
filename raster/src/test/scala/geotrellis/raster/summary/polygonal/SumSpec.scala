@@ -18,8 +18,8 @@ package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
 import geotrellis.raster.summary.polygonal.visitors.SumVisitor
-import geotrellis.vector._
 import geotrellis.raster.testkit._
+import geotrellis.vector._
 import org.scalatest._
 
 class SumSpec

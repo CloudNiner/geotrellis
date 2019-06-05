@@ -25,22 +25,6 @@ trait Implicits {
     new GetComponent[Raster[T], RasterExtent] {
       override def get: Raster[T] => RasterExtent = _.rasterExtent
     }
-
-  implicit class withPolygonalSummaryResultMethods[A](val self: PolygonalSummaryResult[A]) {
-    def toEither: Either[NoIntersection.type, A] = {
-      self match {
-        case NoIntersection => Left(NoIntersection)
-        case Summary(value) => Right(value)
-      }
-    }
-
-    def toOption: Option[A] = {
-      self match {
-        case NoIntersection => None
-        case Summary(value) => Some(value)
-      }
-    }
-  }
 }
 
 object Implicits extends Implicits

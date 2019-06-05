@@ -1,8 +1,36 @@
+/*
+ * Copyright 2019 Azavea
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package geotrellis.raster.summary.polygonal
 
-sealed trait PolygonalSummaryResult[+A]
+sealed trait PolygonalSummaryResult[+A] {
+  def toOption: Option[A]
 
-case object NoIntersection extends PolygonalSummaryResult[Nothing]
-case class Summary[A](value: A) extends PolygonalSummaryResult[A]
+  def toEither: Either[Any, A]
+}
+
+case object NoIntersection extends PolygonalSummaryResult[Nothing] {
+  def toOption = None
+
+  def toEither = Left(NoIntersection)
+}
+case class Summary[A](value: A) extends PolygonalSummaryResult[A] {
+  def toOption = Some(value)
+
+  def toEither = Right(value)
+}
 
 // TODO: Add Monad on PolygonalSummaryResult companion object to support flatMaps

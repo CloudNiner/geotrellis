@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package geotrellis.raster.summary.polygonal
 
 import geotrellis.raster._
 import geotrellis.vector._
 import geotrellis.raster.rasterize.Rasterizer
-import geotrellis.raster.summary.CellVisitor
+import geotrellis.raster.summary.GridVisitor
 import geotrellis.util.{GetComponent, MethodExtensions}
 import spire.syntax.cfor._
 
@@ -26,11 +27,11 @@ object PolygonalSummary {
   final val DefaultOptions =
     Rasterizer.Options(includePartial = true, sampleType = PixelIsArea)
 
-  def apply[A, R](
-      raster: A,
-      geometry: Geometry,
-      cellVisitor: CellVisitor[A, R],
-      options: Rasterizer.Options
+  def apply[A <: Grid[Int], R](
+                                raster: A,
+                                geometry: Geometry,
+                                cellVisitor: GridVisitor[A, R],
+                                options: Rasterizer.Options
   )(implicit
     getRasterExtent: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] = {
     val rasterExtent: RasterExtent = getRasterExtent.get(raster)
@@ -55,18 +56,18 @@ object PolygonalSummary {
     }
   }
 
-  trait PolygonalSummaryMethods[A] extends MethodExtensions[A] {
+  trait PolygonalSummaryMethods[A <: Grid[Int]] extends MethodExtensions[A] {
 
     def polygonalSummary[R](
-        geometry: Geometry,
-        cellVisitor: CellVisitor[A, R],
-        options: Rasterizer.Options
+                             geometry: Geometry,
+                             cellVisitor: GridVisitor[A, R],
+                             options: Rasterizer.Options
     )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
       PolygonalSummary(self, geometry, cellVisitor, options)
 
     def polygonalSummary[R](
         geometry: Geometry,
-        cellVisitor: CellVisitor[A, R]
+        cellVisitor: GridVisitor[A, R]
     )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
       PolygonalSummary(self,
                        geometry,
@@ -75,7 +76,7 @@ object PolygonalSummary {
   }
 
   trait ToPolygonalSummaryMethods {
-    implicit class withPolygonalSummaryMethods[A](val self: A)
+    implicit class withPolygonalSummaryMethods[A <: Grid[Int]](val self: A)
         extends PolygonalSummaryMethods[A]
   }
 
