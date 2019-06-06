@@ -18,7 +18,8 @@ package geotrellis.raster.summary
 
 import geotrellis.raster.Grid
 
-/** Visitor used to summarize a two-dimensional grid T that stores values of R
+/**
+  * Visitor used to summarize a two-dimensional grid T that stores values of R
   *
   * The user should implement concrete subclasses that update the value of `result` as
   * necessary on each call to `visit(raster: T, col: Int, row: Int)`.
@@ -40,8 +41,21 @@ import geotrellis.raster.Grid
   * - https://stackoverflow.com/a/38577878
   */
 trait GridVisitor[-T <: Grid[Int], +R] {
+
   def result: R
 
+  /**
+    * Called when the visitor requests a unit of computation for the given col and row.
+    *
+    * The visitor result should be updated within this method as appropriate for
+    * the implementation.
+    *
+    * @see [[polygonal.visitors.TileFoldingVisitor]] and [[polygonal.visitors.MaxVisitor]] for an example concrete implementation.
+    *
+    * @param grid The grid being visited
+    * @param col The column in the grid being visited
+    * @param row The row in the grid being visited
+    */
   def visit(grid: T, col: Int, row: Int): Unit
 }
 

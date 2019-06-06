@@ -20,6 +20,16 @@ import cats.Monad
 
 import scala.annotation.tailrec
 
+/**
+  * A Result ADT returned by [[PolygonalSummary]] operations
+  *
+  * There are two result types, [[NoIntersection]] and [[Summary]].
+  * This ADT will always return Summary if the Raster and Polygon intersect.
+  * Otherwise, NoIntersection will be returned.
+  *
+  * Provides helpers to convert to Option and Either if you don't need to match
+  * on result type.
+  */
 sealed trait PolygonalSummaryResult[+A] {
   def toOption: Option[A]
 

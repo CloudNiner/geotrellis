@@ -27,10 +27,20 @@ object PolygonalSummary {
   final val DefaultOptions =
     Rasterizer.Options(includePartial = true, sampleType = PixelIsArea)
 
+  /**
+    * Perform a polygonal summary operation over a raster within the bounds of geometry.
+    *
+    * GridVisitor.visit is called for each matching pixel in the raster and rasterized geometry.
+    *
+    * @tparam A type of the Raster to perform the polygonal summary on
+    * @tparam R type of the objects being summarized
+    *
+    * @return The result wrapped in [[PolygonalSummaryResult]] or NoIntersection
+    */
   def apply[A <: Grid[Int], R](
                                 raster: A,
                                 geometry: Geometry,
-                                cellVisitor: GridVisitor[A, R],
+                                gridVisitor: GridVisitor[A, R],
                                 options: Rasterizer.Options
   )(implicit
     getRasterExtent: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] = {
@@ -43,16 +53,16 @@ object PolygonalSummary {
         case area: TwoDimensions if (rasterArea.coveredBy(area)) =>
           cfor(0)(_ < rasterExtent.cols, _ + 1) { col =>
             cfor(0)(_ < rasterExtent.rows, _ + 1) { row =>
-              cellVisitor.visit(raster, col, row)
+              gridVisitor.visit(raster, col, row)
             }
           }
         case _ =>
           Rasterizer.foreachCellByGeometry(geometry, rasterExtent, options) {
             (col: Int, row: Int) =>
-              cellVisitor.visit(raster, col, row)
+              gridVisitor.visit(raster, col, row)
           }
       }
-      Summary(cellVisitor.result)
+      Summary(gridVisitor.result)
     }
   }
 
@@ -60,18 +70,18 @@ object PolygonalSummary {
 
     def polygonalSummary[R](
                              geometry: Geometry,
-                             cellVisitor: GridVisitor[A, R],
+                             gridVisitor: GridVisitor[A, R],
                              options: Rasterizer.Options
     )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
-      PolygonalSummary(self, geometry, cellVisitor, options)
+      PolygonalSummary(self, geometry, gridVisitor, options)
 
     def polygonalSummary[R](
         geometry: Geometry,
-        cellVisitor: GridVisitor[A, R]
+        gridVisitor: GridVisitor[A, R]
     )(implicit ev1: GetComponent[A, RasterExtent]): PolygonalSummaryResult[R] =
       PolygonalSummary(self,
                        geometry,
-                       cellVisitor,
+                       gridVisitor,
                        PolygonalSummary.DefaultOptions)
   }
 

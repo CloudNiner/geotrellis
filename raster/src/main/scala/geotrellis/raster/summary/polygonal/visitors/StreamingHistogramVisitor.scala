@@ -21,6 +21,15 @@ import geotrellis.raster._
 import geotrellis.raster.histogram.StreamingHistogram
 import geotrellis.raster.summary.GridVisitor
 
+/**
+  * Visitor that constructs a StreamingHistogram of visited values
+  *
+  * Each visited value is given a weight of 1 in the histogram.
+  *
+  * Implementations provided for Raster[(Tile, MultibandTile)]
+  *
+  * This visitor skips row/col positions with NaN values.
+  */
 object StreamingHistogramVisitor {
   implicit def toTileVisitor(t: StreamingHistogramVisitor.type):
     TileStreamingHistogramVisitor = new TileStreamingHistogramVisitor
@@ -41,16 +50,18 @@ object StreamingHistogramVisitor {
 
   class MultibandTileStreamingHistogramVisitor
       extends GridVisitor[Raster[MultibandTile], Array[StreamingHistogram]] {
-    private val accumulator = Array[StreamingHistogram]()
+    private var accumulator = Array[StreamingHistogram]()
+    private var initialized = false
 
     def result: Array[StreamingHistogram] = accumulator
 
     def visit(raster: Raster[MultibandTile], col: Int, row: Int): Unit = {
       val tiles = raster.tile.bands.toArray
-      val values: Array[StreamingHistogram] = result ++ Array.fill(
-        tiles.size - result.size)(Monoid[StreamingHistogram].empty)
-      val tilesWithValues: Array[(Tile, StreamingHistogram)] = tiles.zip(values)
-      tilesWithValues.foreach {
+      if (!initialized) {
+        accumulator = Array.fill[StreamingHistogram](tiles.size)(Monoid[StreamingHistogram].empty)
+        initialized = true
+      }
+      tiles.zip(accumulator).foreach {
         case (tile: Tile, histogram: StreamingHistogram) => {
           val newValue = tile.getDouble(col, row)
           if (isData(newValue)) histogram.countItem(newValue, count = 1)

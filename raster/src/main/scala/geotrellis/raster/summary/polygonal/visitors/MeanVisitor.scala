@@ -16,6 +16,13 @@
 
 package geotrellis.raster.summary.polygonal.visitors
 
+/**
+  * Visitor that implements the Mean aggregate function
+  *
+  * Implementations provided for Raster[(Tile, MultibandTile)]
+  *
+  * This visitor skips row/col positions with NaN values.
+  */
 object MeanVisitor {
   implicit def toTileVisitor(t: MeanVisitor.type): TileMeanVisitor = new TileMeanVisitor
   implicit def toMultibandTileVisitor(t: MeanVisitor.type): MultibandTileMeanVisitor =

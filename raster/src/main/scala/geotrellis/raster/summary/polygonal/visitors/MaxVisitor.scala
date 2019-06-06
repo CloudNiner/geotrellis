@@ -18,6 +18,13 @@ package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
 
+/**
+  * Visitor that implements the Max aggregate function
+  *
+  * Implementations provided for Raster[(Tile, MultibandTile)]
+  *
+  * This visitor skips row/col positions with NaN values.
+  */
 object MaxVisitor {
   implicit def toTileVisitor(t: MaxVisitor.type): TileMaxVisitor = new TileMaxVisitor
   implicit def toMultibandTileVisitor(t: MaxVisitor.type): MultibandTileMaxVisitor =

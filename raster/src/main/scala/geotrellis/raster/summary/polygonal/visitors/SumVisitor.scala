@@ -16,6 +16,13 @@
 
 package geotrellis.raster.summary.polygonal.visitors
 
+/**
+  * Visitor that implements the Sum aggregate function
+  *
+  * Implementations provided for Raster[(Tile, MultibandTile)]
+  *
+  * This visitor skips row/col positions with NaN values.
+  */
 object SumVisitor {
   implicit def toTileVisitor(t: SumVisitor.type): TileSumVisitor = new TileSumVisitor
   implicit def toMultibandTileVisitor(t: SumVisitor.type): MultibandTileSumVisitor =

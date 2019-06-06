@@ -19,7 +19,20 @@ package geotrellis.raster.summary.polygonal.visitors
 import geotrellis.raster._
 import geotrellis.raster.summary.GridVisitor
 
-abstract class TileFoldingVisitor
+/**
+  * A Visitor that allows for user-defined aggregations over a Raster[Tile]
+  *
+  * This Visitor is used to implement a few aggregate operations in this package:
+  * - [[MaxVisitor]]
+  * - [[MinVisitor]]
+  * - [[SumVisitor]]
+  * - [[MeanVisitor]]
+  *
+  * This Visitor skips NaN values in the Raster, and will only call fold
+  * when a new valid data value is encountered. You will need to implement
+  * your own visitor if other behavior is desired.
+  */
+protected abstract class TileFoldingVisitor
     extends GridVisitor[Raster[Tile], Option[Double]] {
   private var accumulator: Double = Double.NaN
 

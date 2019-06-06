@@ -18,6 +18,13 @@ package geotrellis.raster.summary.polygonal.visitors
 
 import geotrellis.raster._
 
+/**
+  * Visitor that implements the Min aggregate function
+  *
+  * Implementations provided for Raster[(Tile, MultibandTile)]
+  *
+  * This visitor skips row/col positions with NaN values.
+  */
 object MinVisitor {
   implicit def toTileVisitor(t: MinVisitor.type): TileMinVisitor = new TileMinVisitor
   implicit def toMultibandTileVisitor(t: MinVisitor.type): MultibandTileMinVisitor =

@@ -19,9 +19,15 @@ package geotrellis.raster.summary.polygonal.visitors
 import geotrellis.raster._
 import geotrellis.raster.summary.GridVisitor
 
-// TODO: Docs if public
-// TODO: Refactor for performance
-abstract class MultibandTileFoldingVisitor
+/**
+  * A Visitor that allows for user-defined aggregations over a Raster[MultibandTile]
+  *
+  * This Visitor has the same semantics as [[TileFoldingVisitor]], its just the
+  * MultibandTile version.
+  *
+  * @todo test performance and refactor further if necessary
+  */
+protected abstract class MultibandTileFoldingVisitor
     extends GridVisitor[Raster[MultibandTile], Array[Option[Double]]] {
 
   private var initialized = false
