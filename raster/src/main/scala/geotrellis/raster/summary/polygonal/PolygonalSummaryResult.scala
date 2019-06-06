@@ -16,10 +16,32 @@
 
 package geotrellis.raster.summary.polygonal
 
+import cats.Monad
+
+import scala.annotation.tailrec
+
 sealed trait PolygonalSummaryResult[+A] {
   def toOption: Option[A]
 
   def toEither: Either[Any, A]
+
+  implicit val noIntersectionMonad: Monad[PolygonalSummaryResult] = new Monad[PolygonalSummaryResult] {
+    def flatMap[A, B](fa: PolygonalSummaryResult[A])
+                     (f: A => PolygonalSummaryResult[B]): PolygonalSummaryResult[B] = {
+      flatten(map(fa)(f))
+    }
+
+    def pure[A](x: A): PolygonalSummaryResult[A] = Summary(x)
+
+    @tailrec
+    def tailRecM[A, B](a: A)(f: A => PolygonalSummaryResult[Either[A,B]]): PolygonalSummaryResult[B] = {
+      f(a) match {
+        case NoIntersection => NoIntersection
+        case Summary(Left(nextA)) => tailRecM(nextA)(f)
+        case Summary(Right(b)) => Summary(b)
+      }
+    }
+  }
 }
 
 case object NoIntersection extends PolygonalSummaryResult[Nothing] {
@@ -27,10 +49,9 @@ case object NoIntersection extends PolygonalSummaryResult[Nothing] {
 
   def toEither = Left(NoIntersection)
 }
+
 case class Summary[A](value: A) extends PolygonalSummaryResult[A] {
   def toOption = Some(value)
 
   def toEither = Right(value)
 }
-
-// TODO: Add Monad on PolygonalSummaryResult companion object to support flatMaps
