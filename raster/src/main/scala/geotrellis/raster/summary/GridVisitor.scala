@@ -40,7 +40,7 @@ import geotrellis.raster.Grid
   * - https://stackoverflow.com/a/10604305
   * - https://stackoverflow.com/a/38577878
   */
-trait GridVisitor[-T <: Grid[Int], +R] {
+trait GridVisitor[-T <: Grid[Int], +R] extends Serializable {
 
   def result: R
 
@@ -50,7 +50,7 @@ trait GridVisitor[-T <: Grid[Int], +R] {
     * The visitor result should be updated within this method as appropriate for
     * the implementation.
     *
-    * @see [[polygonal.visitors.TileFoldingVisitor]] and [[polygonal.visitors.MaxVisitor]] for an example concrete implementation.
+    * @see [[polygonal.visitors.TileCombineVisitor]] and [[polygonal.visitors.MaxVisitor]] for an example concrete implementation.
     *
     * @param grid The grid being visited
     * @param col The column in the grid being visited
