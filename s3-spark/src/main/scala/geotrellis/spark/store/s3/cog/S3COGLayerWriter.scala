@@ -67,7 +67,7 @@ class S3COGLayerWriter(
       keyClass = classTag[K].toString(),
       valueClass = classTag[V].toString(),
       bucket = bucket,
-      key = keyPrefix,
+      key = cleanKeyPrefix,
       layerType = COGLayerType
     )
 
@@ -87,7 +87,7 @@ class S3COGLayerWriter(
       // Make RDD[(String, GeoTiff[T])]
       val keyIndex = keyIndexes(zoomRange)
       val maxWidth = Index.digits(keyIndex.toIndex(keyIndex.keyBounds.maxKey))
-      val prefix   = makePath(keyPrefix, s"${layerName}/${zoomRange.minZoom}_${zoomRange.maxZoom}")
+      val prefix   = makePath(cleanKeyPrefix, s"${layerName}/${zoomRange.minZoom}_${zoomRange.maxZoom}")
       val keyPath  = (key: K) => makePath(prefix, Index.encode(keyIndex.toIndex(key), maxWidth))
 
       // Save all partitions
@@ -124,6 +124,9 @@ class S3COGLayerWriter(
       samplesAccumulator.reset
     }
   }
+
+  // keyPrefix can be null if user is writing to the bucket root, e.g. s3://foo
+  private def cleanKeyPrefix = Option(keyPrefix).getOrElse("")
 }
 
 object S3COGLayerWriter {

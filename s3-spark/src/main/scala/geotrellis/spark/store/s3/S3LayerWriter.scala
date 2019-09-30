@@ -110,7 +110,7 @@ class S3LayerWriter(
   ](id: LayerId, rdd: RDD[(K, V)] with Metadata[M], keyIndex: KeyIndex[K]): Unit = {
     require(!attributeStore.layerExists(id), s"$id already exists")
     implicit val sc = rdd.sparkContext
-    val prefix = makePath(keyPrefix, s"${id.name}/${id.zoom}")
+    val prefix = makePath(cleanKeyPrefix, s"${id.name}/${id.zoom}")
     val metadata = rdd.metadata
     val header = S3LayerHeader(
       keyClass = classTag[K].toString(),
@@ -131,6 +131,9 @@ class S3LayerWriter(
       case e: Exception => throw new LayerWriteError(id).initCause(e)
     }
   }
+
+  // keyPrefix can be null if user is writing to the bucket root, e.g. s3://foo
+  private def cleanKeyPrefix = Option(keyPrefix).getOrElse("")
 }
 
 object S3LayerWriter {
