@@ -8,41 +8,44 @@ them as you want in your ``build.sbt``.
 geotrellis-accumulo
 -------------------
 
-Allows the use of `Apache Accumulo <https://accumulo.apache.org/>`__ as
-a Tile layer backend.
+Implements ``geotrellis.store`` types for `Apache Accumulo <https://accumulo.apache.org/>`__.
 
-*Provides:* ``geotrellis.spark.io.accumulo.*``
+*Provides:* ``geotrellis.store.accumulo.*``
 
 -  Save and load layers to and from Accumulo. Query large layers
    efficiently using the layer query API.
 
+geotrellis-accumulo-spark
+-------------------------
+
+Implements ``geotrellis.spark.store`` types for `Apache Accumulo <https://accumulo.apache.org/>`__,
+extending ``geotrellis-accumulo``.
+
+*Provides:* ``geotrellis.spark.store.accumulo.*``
+
+-  Save and load layers to and from Accumulo within a Spark Context using RDDs.
+-  Supoort Accumulo backend for TileLayerRDDs.
+
 geotrellis-cassandra
---------------------
+-------------------
 
-Allows the use of `Apache Cassandra <http://cassandra.apache.org/>`__ as
-a Tile layer backend.
+Implements ``geotrellis.store`` types for `Apache Cassandra <http://cassandra.apache.org/>`__.
 
-*Provides:* ``geotrellis.spark.io.cassandra.*``
+*Provides:* ``geotrellis.store.cassandra.*``
 
 -  Save and load layers to and from Cassandra. Query large layers
    efficiently using the layer query API.
 
-geotrellis-etl
---------------
+geotrellis-cassandra-spark
+-------------------------
 
-A command-line tool for streamlining the ingest process.
+Implements ``geotrellis.spark.store`` types for `Apache Cassandra <https://cassandra.apache.org/>`__,
+extending ``geotrellis-cassandra``.
 
-*Provides:* ``geotrellis.spark.etl.*``
+*Provides:* ``geotrellis.spark.store.cassandra.*``
 
--  Parse command line options for input and output of ETL (Extract,
-   Transform, and Load) applications
--  Utility methods that make ETL applications easier for the user to
-   build.
--  Work with input rasters from the local file system, HDFS, or S3
--  Reproject input rasters using a per-tile reproject or a seamless
-   reprojection that takes into account neighboring tiles.
--  Transform input rasters into layers based on a ZXY layout scheme
--  Save layers into Accumulo, S3, HDFS or the local file system.
+-  Save and load layers to and from Cassandra within a Spark Context using RDDs.
+-  Supoort Accumulo backend for TileLayerRDDs.
 
 geotrellis-geomesa
 ------------------
@@ -50,23 +53,65 @@ geotrellis-geomesa
 *Experimental.* GeoTrellis compatibility for the distributed feature
 store `GeoMesa <http://www.geomesa.org/>`__.
 
-*Provides:* ``geotrellis.spark.io.geomesa.*``
+*Provides:* ``geotrellis.geomesa.geotools.*``
+*Provides:* ``geotrellis.spark.store.geomesa.*``
 
 -  Save and load ``RDD``\ s of features to and from GeoMesa.
 
+geotrellis-geotools
+-------------------
+
+TODO: Complete
+
+*Provides:* ``geotrellis.geotools.*``
+
+geotrellis-geowave
+------------------
+
+TODO: Review
+
+*Experimental.* GeoTrellis compatibility for the distributed feature
+store `GeoWave <https://github.com/ngageoint/geowave>`__.
+
+*Provides:* ``geotrellis.spark.io.geowave.*``
+
+-  Save and load ``RDD``\ s of features to and from GeoWave.
+
 geotrellis-hbase
-----------------
+-------------------
 
-Allows the use of `Apache HBase <http://hbase.apache.org/>`__ as a Tile
-layer backend.
+Implements ``geotrellis.store`` types for `Apache HBase <http://hbase.apache.org/>`__.
 
-*Provides:* ``geotrellis.spark.io.hbase.*``
+*Provides:* ``geotrellis.store.hbase.*``
 
 -  Save and load layers to and from HBase. Query large layers
    efficiently using the layer query API.
 
+geotrellis-hbase-spark
+-------------------------
+
+Implements ``geotrellis.spark.store`` types for `Apache hbase <https://hbase.apache.org/>`__,
+extending ``geotrellis-hbase``.
+
+*Provides:* ``geotrellis.spark.store.hbase.*``
+
+-  Save and load layers to and from HBase within a Spark Context using RDDs.
+-  Supoort Accumulo backend for TileLayerRDDs.
+
+geotrellis-layer
+----------------
+
+TODO: Grisha update this section
+
+geotrellis-macros
+-----------------
+
+TODO: Complete
+
 geotrellis-proj4
 ----------------
+
+TODO: Review
 
 *Provides:* ``geotrellis.proj4.*``, ``org.osgeo.proj4.*`` (Java)
 
@@ -78,6 +123,8 @@ geotrellis-proj4
 
 geotrellis-raster
 -----------------
+
+TODO: Grisha update this section
 
 Types and algorithms for Raster processing.
 
@@ -127,6 +174,8 @@ Types and algorithms for Raster processing.
 geotrellis-raster-testkit
 -------------------------
 
+TODO: Review
+
 Integration tests for ``geotrellis-raster``.
 
 -  Build test raster data.
@@ -134,6 +183,8 @@ Integration tests for ``geotrellis-raster``.
 
 geotrellis-s3
 -------------
+
+TODO: Review
 
 Allows the use of `Amazon S3 <https://aws.amazon.com/s3/>`__ as a Tile
 layer backend.
@@ -145,8 +196,15 @@ layer backend.
 -  Save spatially keyed RDDs of byte arrays to z/x/y files in S3. Useful
    for saving PNGs off for use as map layers in web maps.
 
+geotrellis-s3-spark
+-------------------
+
+TODO: Complete
+
 geotrellis-shapefile
 --------------------
+
+TODO: Review
 
 *Provides:* ``geotrellis.shapefile.*``
 
@@ -155,6 +213,8 @@ geotrellis-shapefile
 
 geotrellis-spark
 ----------------
+
+TODO: Review
 
 Tile layer algorithms powered by `Apache
 Spark <http://spark.apache.org/>`__.
@@ -194,8 +254,15 @@ Spark <http://spark.apache.org/>`__.
 -  Utilities around creating spark contexts for applications using
    GeoTrellis, including a Kryo registrator that registers most types.
 
+geotrellis-spark-pipeline
+-------------------------
+
+TODO: Complete
+
 geotrellis-spark-testkit
 ------------------------
+
+TODO: Review
 
 Integration tests for ``geotrellis-spark``.
 
@@ -203,10 +270,23 @@ Integration tests for ``geotrellis-spark``.
 -  Matching methods to test equality of RDDs of raster data in scalatest
    unit tests.
 
-geotrellis-geotools
--------------------
+geotrellis-store
+----------------
 
-*Provides:* ``geotrellis.geotools.*``
+TODO: Grisha complete this section
+
+geotrellis-util
+---------------
+
+Plumbing for other GeoTrellis modules.
+
+*Provides:* ``geotrellis.util.*``
+
+-  Constants
+-  Data structures missing from Scala, such as BTree
+-  Haversine implementation
+-  Lenses
+-  RangeReader for reading contiguous subsets of data from a source
 
 geotrellis-vector
 -----------------
@@ -215,12 +295,11 @@ Types and algorithms for processing Vector data.
 
 *Provides:* ``geotrellis.vector.*``
 
--  Provides a scala idiomatic wrapper around JTS types: Point, Line
-   (LineString in JTS), Polygon, MultiPoint, MultiLine (MultiLineString
-   in JTS), MultiPolygon, GeometryCollection
+-  Provides idiomatic helpers for the JTS types: Point, LineString,
+   Polygon, MultiPoint, MultiLineString, MultiPolygon, GeometryCollection
 -  Methods for geometric operations supported in JTS, with results that
    provide a type-safe way to match over possible results of geometries.
--  Provides a Feature type that is the composition of a geometry and a
+-  Provides a Feature type that is the composition of an id, geometry and a
    generic data type.
 -  Read and write geometries and features to and from GeoJSON.
 -  Read and write geometries to and from WKT and WKB.
@@ -241,31 +320,9 @@ Integration tests for ``geotrellis-vector``.
 geotrellis-vectortile
 ---------------------
 
-*Experimental.* A full `Mapbox
-VectorTile <https://www.mapbox.com/vector-tiles/>`__ codec.
+*Experimental.* A full `Mapbox VectorTile <https://www.mapbox.com/vector-tiles/>`__ codec.
 
 *Provides:* ``geotrellis.vectortile.*``
 
 -  Lazy decoding
 -  Read/write ``VectorTile`` tile layers from any tile backend
-
-geotrellis-util
----------------
-
-Plumbing for other GeoTrellis modules.
-
-*Provides:* ``geotrellis.util.*``
-
--  Data structures missing from Scala
--  Lenses
--  Constants
-
-geotrellis-geowave
-------------------
-
-*Experimental.* GeoTrellis compatibility for the distributed feature
-store `GeoWave <https://github.com/ngageoint/geowave>`__.
-
-*Provides:* ``geotrellis.spark.io.geowave.*``
-
--  Save and load ``RDD``\ s of features to and from GeoWave.
