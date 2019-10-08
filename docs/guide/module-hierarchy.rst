@@ -47,6 +47,21 @@ extending ``geotrellis-cassandra``.
 -  Save and load layers to and from Cassandra within a Spark Context using RDDs.
 -  Supoort Accumulo backend for TileLayerRDDs.
 
+geotrellis-gdal
+-------------------------
+
+Implements GeoTrellis `GDAL <https://gdal.org/>`__ support.
+
+*Provides:* ``geotrellis.raster.gdal.*``
+
+-  Implements GDALRasterSources to read, reproject, resample, convert rasters.
+   Performs all transformations via GDALWarp.
+
+geotrellis-gdal-spark
+-------------------------
+
+Contains integration ``geotrellis.raster.gdal.*`` tests for Spark.
+
 geotrellis-geomesa
 ------------------
 
@@ -61,14 +76,14 @@ store `GeoMesa <http://www.geomesa.org/>`__.
 geotrellis-geotools
 -------------------
 
-TODO: Complete
+*Provides:* ``geotrellis.geotools.*``
+
+-  Conversion functions between GeoTrellis, OpenGIS and GeoTools ``Features``.
 
 *Provides:* ``geotrellis.geotools.*``
 
 geotrellis-geowave
 ------------------
-
-TODO: Review
 
 *Experimental.* GeoTrellis compatibility for the distributed feature
 store `GeoWave <https://github.com/ngageoint/geowave>`__.
@@ -101,17 +116,33 @@ extending ``geotrellis-hbase``.
 geotrellis-layer
 ----------------
 
-TODO: Grisha update this section
+Datatypes to describe Layers (sets of spatially referenced rasters).
+
+*Provides:* ``geotrellis.layer.*``
+
+-  Generic way to represent key value ``Seq``s as layers, where the key
+   represents a coordinate in space based on some uniform grid layout,
+   optionally with a temporal component.
+-  Contains data types to describe ``LayoutSchemes`` and ``LayoutDefinitions``,
+   ``KeyBounds``, layer key types (``SpatialKey``, ``SpaceTimeKey``) and ``TileLayerMetadata``
+   layer metadata type.
+-  Implements ``SpaceTimeKey`` ``collection layer`` projection to the ``SpatialKey`` space.
+-  MapAlgebra (focal and local) for ``collection layers``.
+-  Mask and Stitch operations for ``collection layers``.
+-  Implements tiling for ``RasterSources``.
 
 geotrellis-macros
 -----------------
 
-TODO: Complete
+The intention of this package is to keep API both performant and expressive enough.
+
+*Provides:* ``geotrellis.macors.*``
+
+-  Contains inline ``Tile`` ``NoData``, ``foreach`` and ``map`` and
+   type conversions macros implementations.
 
 geotrellis-proj4
 ----------------
-
-TODO: Review
 
 *Provides:* ``geotrellis.proj4.*``, ``org.osgeo.proj4.*`` (Java)
 
@@ -123,8 +154,6 @@ TODO: Review
 
 geotrellis-raster
 -----------------
-
-TODO: Grisha update this section
 
 Types and algorithms for Raster processing.
 
@@ -170,11 +199,17 @@ Types and algorithms for Raster processing.
 -  Kriging Interpolation of point data into rasters.
 -  Viewshed operation.
 -  RegionGroup operation.
+-  Kernel density estimation.
+-  Raster histogram equalization and matching methods.
+-  Delaunay triangulation rasterizer.
+-  Provides a higher ordered generalized RasterSources abstraction IO API to read rasters
+   from different sources. RasterSources allow to abstract over the IO implementation
+   (it is possible to use native GeoTrellis Java GeoTiff reader or to use GDAL).
+-  Allows to perform a lazy RasterSources transformation operations:
+   reprojection, resampling and cellType conversion.
 
 geotrellis-raster-testkit
 -------------------------
-
-TODO: Review
 
 Integration tests for ``geotrellis-raster``.
 
@@ -203,8 +238,6 @@ TODO: Complete
 
 geotrellis-shapefile
 --------------------
-
-TODO: Review
 
 *Provides:* ``geotrellis.shapefile.*``
 
@@ -253,16 +286,27 @@ Spark <http://spark.apache.org/>`__.
    coordinates.
 -  Utilities around creating spark contexts for applications using
    GeoTrellis, including a Kryo registrator that registers most types.
+-  Implements GeoTrellis COGLayers creation, persistence and query mechanisms.
 
 geotrellis-spark-pipeline
 -------------------------
 
-TODO: Complete
+Pipelines are the operative construct in GeoTrellis,
+the original idea was taken from `PDAL <https://pdal.io/pipeline.html>`__.
+Pipelines can represent not a simple ETL process but a set of instructions:
+how to read data, transform (process), write it. The result of the Pipeline
+should not always be writing, it can also be some intermediate transformation result,
+or just a raw data.
+
+*Provides:* ``geotrellis.spark.pipeline.*``
+
+-  Provides a JSON DSL to represent set of instructions that should be done to perform the ingest.
+-  Provides a Scala DSL that provides abstraction over GeoTrellis operations and allows to avoid JSON hand writing.
+-  Allows to perform read (from local file system, s3, hdfs, etc), transform
+   (tile-to-layout, reproject, pyramid) and write (all supported GeoTrellis stores).
 
 geotrellis-spark-testkit
 ------------------------
-
-TODO: Review
 
 Integration tests for ``geotrellis-spark``.
 
@@ -273,7 +317,15 @@ Integration tests for ``geotrellis-spark``.
 geotrellis-store
 ----------------
 
-TODO: Grisha complete this section
+In GeoTrellis 3.0 it was decided to call ``backends`` where the data is stored (i.e. S3, HDFS, Accumulo, etc.) to call ``stores``.
+
+*Provides:* ``geotrellis.store.*``
+
+-  Contains interfaces for ``LayerReaders``, ``LayerWriters`` and ``ValueReaders``.
+-  Avro ``Tile`` codecs.
+-  Local file system and HDFS ``COG`` and ``GeoTrellis`` ``Value`` and ``Collection`` readers implementation.
+-  Indexing strategies implementation: ZCurve and HilbertCurve.
+-  GeoTrellisRasterSources that implement access to GeoTrellis layers through the new API.
 
 geotrellis-util
 ---------------
