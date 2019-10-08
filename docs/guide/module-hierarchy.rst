@@ -60,7 +60,7 @@ Implements GeoTrellis `GDAL <https://gdal.org/>`__ support.
 geotrellis-gdal-spark
 -------------------------
 
-Contains integration ``geotrellis.raster.gdal.*`` tests for Spark.
+Contains geotrellis.raster.gdal.* integration tests for Spark.
 
 geotrellis-geomesa
 ------------------
@@ -136,10 +136,10 @@ geotrellis-macros
 
 The intention of this package is to keep API both performant and expressive enough.
 
-*Provides:* ``geotrellis.macors.*``
+*Provides:* ``geotrellis.macros.*``
 
--  Contains inline ``Tile`` ``NoData``, ``foreach`` and ``map`` and
-   type conversions macros implementations.
+-  Contains inline macro implementations for ``Tile`` ``NoData``, ``foreach``, ``map`` and some
+   type conversions.
 
 geotrellis-proj4
 ----------------
@@ -202,10 +202,11 @@ Types and algorithms for Raster processing.
 -  Kernel density estimation.
 -  Raster histogram equalization and matching methods.
 -  Delaunay triangulation rasterizer.
--  Provides a higher ordered generalized RasterSources abstraction IO API to read rasters
-   from different sources. RasterSources allow to abstract over the IO implementation
-   (it is possible to use native GeoTrellis Java GeoTiff reader or to use GDAL).
--  Allows to perform a lazy RasterSources transformation operations:
+-  Provides an abstract, higher order API for reading ``RasterSources``
+   from different sources. ``RasterSource`` is an abstraction over I/O implementations.
+   Other ``GeoTrellis`` packages provide concrete ``RasterSource`` implementations,
+   such as ``GDALRasterSource`` in a ``geotrellis.raster.gdal`` package.
+-  Implements lazy RasterSource transformation operations:
    reprojection, resampling and cellType conversion.
 
 geotrellis-raster-testkit
@@ -286,24 +287,25 @@ Spark <http://spark.apache.org/>`__.
    coordinates.
 -  Utilities around creating spark contexts for applications using
    GeoTrellis, including a Kryo registrator that registers most types.
--  Implements GeoTrellis COGLayers creation, persistence and query mechanisms.
+-  Implements GeoTrellis ``COGLayer`` creation, persistence and query mechanisms.
 
 geotrellis-spark-pipeline
 -------------------------
 
 Pipelines are the operative construct in GeoTrellis,
 the original idea was taken from `PDAL <https://pdal.io/pipeline.html>`__.
-Pipelines can represent not a simple ETL process but a set of instructions:
+Pipelines represent a set of instructions rather than a simple ETL process:
 how to read data, transform (process), write it. The result of the Pipeline
 should not always be writing, it can also be some intermediate transformation result,
 or just a raw data.
 
 *Provides:* ``geotrellis.spark.pipeline.*``
 
--  Provides a JSON DSL to represent set of instructions that should be done to perform the ingest.
--  Provides a Scala DSL that provides abstraction over GeoTrellis operations and allows to avoid JSON hand writing.
--  Allows to perform read (from local file system, s3, hdfs, etc), transform
-   (tile-to-layout, reproject, pyramid) and write (all supported GeoTrellis stores).
+-  Provides a JSON DSL that represents a set of instructions performed on some data source.
+-  Provides a Scala DSL that abstracts over GeoTrellis pipeline operations. It also allows
+   users to avoid manually writing the JSON DSL.
+-  Allows reads (from local file system, s3, hdfs, etc), transformations (tile-to-layout,
+   reproject, pyramid) and writes (all supported GeoTrellis stores).
 
 geotrellis-spark-testkit
 ------------------------
@@ -317,7 +319,9 @@ Integration tests for ``geotrellis-spark``.
 geotrellis-store
 ----------------
 
-In GeoTrellis 3.0 it was decided to call ``backends`` where the data is stored (i.e. S3, HDFS, Accumulo, etc.) to call ``stores``.
+Types and interfaces for interacting with a number of different storage backends in an abstract way.
+
+In older versions of GeoTrellis, ``store`` implementations were referred to as ``backends``.
 
 *Provides:* ``geotrellis.store.*``
 
